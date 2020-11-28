@@ -1,8 +1,19 @@
-class Piece:
+from library.tetromino_library import get_shape
 
-    def __init__(self, name, stages):
-        self.name = name
-        self.stages = stages
 
-    def get_name(self):
-        return self.name
+class Tetromino:
+
+    def __init__(self, type):
+        self.type = type
+        self.state = 0
+        self.x = 3
+        self.y = 0
+
+    def get_shape(self):
+        return get_shape(self.type, self.state)
+
+    def get_type(self):
+        return self.type
+
+    def set_state(self, state):
+        self.state = state
