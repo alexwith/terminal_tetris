@@ -1,5 +1,7 @@
 import os
 import time
+import display
+import threading
 from enums.display_state import DisplayState
 from board.board import Board
 
@@ -8,6 +10,7 @@ class Display:
 
     def __init__(self):
         self.display_state = DisplayState.START
+        self.board = Board()
 
     def draw_display(self):
         os.system("clear")
@@ -16,12 +19,8 @@ class Display:
         elif (self.display_state == DisplayState.CONTROLS):
             self.draw_controls()
         elif (self.display_state == DisplayState.RUN):
-            board = Board()
-            for y in board.grid:
-                thing = ""
-                for x in y:
-                    thing += " ."
-                print(thing)
+            self.board.redraw()
+            pass
 
     def draw_start(self):
         print("#############################")
@@ -63,9 +62,10 @@ class Display:
     def update_display_timer(self):
         if (self.display_state != DisplayState.RUN):
             self.draw_display()
-        while self.display_state == DisplayState.RUN:
-            time.sleep(0.5)
+
+        """while self.display_state == DisplayState.RUN:
             self.draw_display()
+            time.sleep(0.5)"""
 
 
 display = Display()
