@@ -20,7 +20,8 @@ class Display:
             self.draw_controls()
         elif (self.display_state == DisplayState.RUN):
             self.board.redraw()
-            pass
+        elif (self.display_state == DisplayState.PAUSE):
+            self.draw_pause()
 
     def draw_start(self):
         print("#############################")
@@ -42,17 +43,38 @@ class Display:
         print("# space      - hard drop                #")
         print("# ⇩          - soft drop                #")
         print("# shift or C - hold                     #")
+        print("# P          - pause the game           #")
         print("# E          - exit                     #")
         print("#                                       #")
         print("#########################################")
 
+    def draw_pause(self):
+        print("#############################")
+        print("#      TERMINAL TETRIS      #")
+        print("#                           #")
+        print("#           PAUSED          #")
+        print("#      Press R to resume    #")
+        print("#                           #")
+        print("#############################")
+
     def controls(self):
-        self.display_state = DisplayState.CONTROLS
-        self.update_display_timer()
+        if (self.display_state == DisplayState.START):
+            self.display_state = DisplayState.CONTROLS
+            self.update_display_timer()
 
     def start(self):
         self.display_state = DisplayState.RUN
         self.update_display_timer()
+
+    def pause(self):
+        if (self.display_state == DisplayState.RUN):
+            self.display_state = DisplayState.PAUSE
+            self.update_display_timer()
+
+    def resume(self):
+        if (self.display_state == DisplayState.PAUSE):
+            self.display_state = DisplayState.RUN
+            self.update_display_timer()
 
     def exit(self):
         if (self.display_state == DisplayState.CONTROLS):
@@ -63,9 +85,9 @@ class Display:
         if (self.display_state != DisplayState.RUN):
             self.draw_display()
 
-        """while self.display_state == DisplayState.RUN:
+        while self.display_state == DisplayState.RUN:
             self.draw_display()
-            time.sleep(0.5)"""
+            time.sleep(0.5)
 
 
 display = Display()

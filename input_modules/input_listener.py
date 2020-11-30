@@ -16,14 +16,15 @@ actions = [
     [Key.shift, KeyCode(char="c"), board.hold],
     [Key.enter, display.start],
     [KeyCode(char="h"), display.controls],
-    [KeyCode(char="e"), display.exit]
+    [KeyCode(char="e"), display.exit],
+    [KeyCode(char="p"), display.pause],
+    [KeyCode(char="r"), display.resume]
 ]
 
 
 def listen():
 
     def on_press(key):
-        print("pressed: " + threading.current_thread().name)
         for entry in actions:
             successful = False
             for i in range(len(entry) - 1):

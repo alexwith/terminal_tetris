@@ -7,4 +7,5 @@ from library.tetromino_library import dictionary
 listener_thread = threading.Thread(target=listen)
 listener_thread.start()
 
-handle_input()
+input_thread = threading.Thread(target=handle_input)
+input_thread.start()

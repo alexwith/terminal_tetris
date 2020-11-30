@@ -1,4 +1,6 @@
 from objects.tetromino import Tetromino
+import time
+import threading
 
 
 class Board:
@@ -31,30 +33,22 @@ class Board:
         return ""
 
     def move_left(self):
-        print("move left")
         pass
 
     def move_right(self):
-        print("move right")
         pass
 
     def rotate_clockwise(self):
-        print("rotate clockwise")
         pass
 
     def rotate_counter_clockwise(self):
-        print("rotate counter clockwise")
         pass
 
     def soft_drop(self):
-        print("soft drop")
         pass
 
     def hard_drop(self):
-        print("hard drop")
         pass
 
     def hold(self):
-        print("hold")
-        self.score = 100
         pass
