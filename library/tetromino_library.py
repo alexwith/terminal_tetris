@@ -1,3 +1,6 @@
+import random
+from enums.tetromino_type import TetrominoType
+
 dictionary = {
     "I": [
         [
@@ -74,8 +77,8 @@ dictionary = {
             [0, 1, 1, 0],
             [0, 1, 1, 0],
             [0, 0, 0, 0]
-        ] * 4
-    ],
+        ]
+    ] * 4,
     "S": [
         [
             [0, 1, 1],
@@ -143,7 +146,12 @@ dictionary = {
         ]
     ]
 }
+tetrominos = [key for key in dictionary]
 
 
 def get_shape(type, state):
     return dictionary[type.get_name()][state]
+
+
+def get_random():
+    return getattr(TetrominoType, random.choice(tetrominos))

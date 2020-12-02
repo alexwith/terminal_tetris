@@ -1,8 +1,9 @@
 import time
 import threading
+import random
 from objects.tetromino import Tetromino
 from enums.tetromino_type import TetrominoType
-from library.tetromino_library import get_shape
+from library.tetromino_library import get_shape, get_random
 
 
 class Board:
@@ -11,8 +12,8 @@ class Board:
         self.grid = [[0 for x in range(10)] for y in range(20)]
         self.moving_grid = [[0 for x in range(10)] for y in range(20)]
         self.score = 0
-        self.current = Tetromino(TetrominoType.T)
-        self.next = TetrominoType.O
+        self.current = Tetromino(get_random())
+        self.next = get_random()
         self.hold = None
 
     def set_tetromino(self, type):
@@ -24,12 +25,19 @@ class Board:
         for y, row_value in enumerate(current_shape):
             for x, column_value in enumerate(row_value):
                 if (current_shape[y][x] == 1):
-                    if (self.current.y + y >= len(self.grid) - 1):
+                    if (self.current.y + y >= len(self.grid) - 1 or self.grid[self.current.y + y + 1][self.current.x + x] == 1):
                         self.current.set_complete(True)
                     self.moving_grid[self.current.y +
                                      y][self.current.x + x] = current_shape[y][x]
         if (not self.current.complete):
             self.current.y += 1
+        else:
+            for y, row_value in enumerate(current_shape):
+                for x, column_value in enumerate(row_value):
+                    if (current_shape[y][x] == 1):
+                        self.grid[self.current.y + y][self.current.x + x] = 1
+            self.current = Tetromino(self.next)
+            self.next = get_random()
         for y, row_value in enumerate(self.grid):
             row_text = "#"
             for x, column_value in enumerate(row_value):
@@ -74,7 +82,14 @@ class Board:
         pass
 
     def hard_drop(self):
-        pass
+        current_shape = get_shape(self.current.type, self.current.state)
+        while (not self.current.complete):
+            self.current.y += 1
+            for y, row_value in enumerate(current_shape):
+                for x, column_value in enumerate(row_value):
+                    if (current_shape[y][x] == 1):
+                        if (self.current.y + y >= len(self.grid) - 1 or self.grid[self.current.y + y + 1][self.current.x + x] == 1):
+                            self.current.set_complete(True)
 
     def hold(self):
         pass
