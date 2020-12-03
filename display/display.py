@@ -87,7 +87,7 @@ class Display:
 
         while self.display_state == DisplayState.RUN:
             self.draw_display()
-            time.sleep(0.5)
+            self.board.timeout()
 
 
 display = Display()

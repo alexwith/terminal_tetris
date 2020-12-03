@@ -11,15 +11,16 @@ class Board:
     def __init__(self):
         self.grid = [[0 for x in range(10)] for y in range(20)]
         self.moving_grid = [[0 for x in range(10)] for y in range(20)]
+        self.level = 0
         self.score = 0
+        self.total_cleared = 0
         self.current = Tetromino(get_random())
         self.next = get_random()
         self.hold = None
 
-    def set_tetromino(self, type):
-        self.tetromino = Tetromino(type)
-
     def redraw(self):
+        self.give_points()
+        self.advance_level()
         self.moving_grid = [[0 for x in range(10)] for y in range(20)]
         current_shape = get_shape(self.current.type, self.current.state)
         for y, row_value in enumerate(current_shape):
@@ -47,8 +48,29 @@ class Board:
                     row_text += " ."
             print(row_text + " # " + self.get_side_display_line(y))
 
+    def timeout(self):
+        time.sleep(1/self.level)
+
+    def give_points(self):
+        cleared = 0
+        points = [40, 100, 300, 1200]
+        for y, row in enumerate(self.grid):
+            if (not 0 in row):
+                self.grid[y] = [0 for x in range(10)]
+                cleared += 1
+                self.total_cleared += 1
+        if (cleared > 0):
+            self.score += points[cleared - 1]*(self.level + 1)
+
+    def advance_level(self):
+        if (self.total_cleared >= 10):
+            self.total_cleared = 0
+            self.level += 1
+
     def get_side_display_line(self, y):
-        if (y == 16):
+        if (y == 15):
+            return f"Level: {self.level}"
+        elif (y == 16):
             return f"Score: {self.score}"
         elif (y == 18):
             return f"Next: {self.next.name}"
