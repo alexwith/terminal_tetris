@@ -10,7 +10,7 @@ class Display:
 
     def __init__(self):
         self.display_state = DisplayState.START
-        self.board = Board()
+        self.board = Board(10, 20)
 
     def draw_display(self):
         os.system("clear")
