@@ -4,6 +4,7 @@ import display
 import threading
 from enums.display_state import DisplayState
 from board.board import Board
+from constants import REFRESH_INTERVAL
 
 
 class Display:
@@ -87,7 +88,7 @@ class Display:
 
         while self.display_state == DisplayState.RUN:
             self.draw_display()
-            self.board.timeout()
+            time.sleep(REFRESH_INTERVAL)
 
 
 display = Display()
