@@ -7,10 +7,11 @@ from library.tetromino_library import get_shape, get_random
 
 class Board:
 
-    def __init__(self, width, height):
+    def __init__(self, display, width, height):
         self.generate_grid = lambda: [
             [0 for x in range(self.width)] for y in range(self.height)]
 
+        self.display = display
         self.width = width
         self.height = height
         self.to_show = []
@@ -29,6 +30,7 @@ class Board:
 
     def redraw(self):
         self.timer += 1
+        self.check_game_over()
         self.attempt_reward()
         self.advance_level()
         self.moving_grid = self.generate_grid()
@@ -78,6 +80,11 @@ class Board:
         if (self.total_cleared >= 1):
             self.total_cleared = 0
             self.level += 1
+
+    def check_game_over(self):
+        for x in range(self.width):
+            if (self.grid[1][x] == 1):
+                self.display.game_over()
 
     def move_or_switch(self):
         if (self.timer >= 3):

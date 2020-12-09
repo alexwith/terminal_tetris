@@ -2,11 +2,12 @@ from pynput import keyboard  # pip3 install pynput
 from pynput.keyboard import KeyCode
 from pynput.keyboard import Key
 from display.display import display
+from main_port import shutdown
 from input_modules.input_handler import input_queue
 import threading
 
-board = display.board
-actions = [
+
+def actions(board): return [
     [Key.left, board.move_left],
     [Key.right, board.move_right],
     [Key.up, KeyCode(char="x"), board.rotate_clockwise],
@@ -18,14 +19,16 @@ actions = [
     [KeyCode(char="h"), display.controls],
     [KeyCode(char="e"), display.exit],
     [KeyCode(char="p"), display.pause],
-    [KeyCode(char="r"), display.resume]
+    [KeyCode(char="r"), display.resume],
+    [KeyCode(char="s"), display.leave_game_over],
+    [KeyCode(char="q"), shutdown]
 ]
 
 
 def listen():
 
     def on_press(key):
-        for entry in actions:
+        for entry in actions(display.board):
             successful = False
             for i in range(len(entry) - 1):
                 if ((not successful) and key == entry[i]):

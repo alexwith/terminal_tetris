@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import display
 import threading
@@ -11,7 +12,7 @@ class Display:
 
     def __init__(self):
         self.display_state = DisplayState.START
-        self.board = Board(10, 20)
+        self.board = Board(self, 10, 20)
 
     def draw_display(self):
         os.system("clear")
@@ -23,6 +24,8 @@ class Display:
             self.board.redraw()
         elif (self.display_state == DisplayState.PAUSE):
             self.draw_pause()
+        elif (self.display_state == DisplayState.GAME_OVER):
+            self.draw_game_over()
 
     def draw_start(self):
         print("#############################")
@@ -47,6 +50,8 @@ class Display:
         print("# P          - pause the game           #")
         print("# E          - exit                     #")
         print("#                                       #")
+        print("# Q          - quit/shutdown            #")
+        print("#                                       #")
         print("#########################################")
 
     def draw_pause(self):
@@ -55,6 +60,15 @@ class Display:
         print("#                           #")
         print("#           PAUSED          #")
         print("#      Press R to resume    #")
+        print("#                           #")
+        print("#############################")
+
+    def draw_game_over(self):
+        print("#############################")
+        print("#      TERMINAL TETRIS      #")
+        print("#                           #")
+        print("#        GAME OVER          #")
+        print("#   Press S to go to start  #")
         print("#                           #")
         print("#############################")
 
@@ -81,6 +95,16 @@ class Display:
         if (self.display_state == DisplayState.CONTROLS):
             self.display_state = DisplayState.START
             self.update_display_timer()
+
+    def leave_game_over(self):
+        if (self.display_state == DisplayState.GAME_OVER):
+            self.display_state = DisplayState.START
+            self.update_display_timer()
+
+    def game_over(self):
+        self.display_state = DisplayState.GAME_OVER
+        self.board = Board(self, 10, 20)
+        self.update_display_timer()
 
     def update_display_timer(self):
         if (self.display_state != DisplayState.RUN):
