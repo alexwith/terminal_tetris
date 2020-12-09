@@ -33,8 +33,8 @@ class Board:
         self.advance_level()
         self.moving_grid = self.generate_grid()
         self.visualized_grid = self.generate_grid()
-        self.visualize()
         self.apply_moving_grid()
+        self.visualize()
         self.move_or_switch()
         self.draw_grids()
         print("\n".join(''.join(line) for line in self.to_show))
@@ -104,27 +104,20 @@ class Board:
                              y][self.current.x + x] = self.current_shape()[y][x]
         self.iterate_current(logic)
 
-    """def visualize(self):
-        current_y = self.current.y
+    def visualize(self):
         complete = False
-        while (not complete and not self.current.y >= 17):
+        current_y = self.current.y
+        while (not complete and not self.current.complete):
             current_y += 1
             for y, row in enumerate(self.current_shape()):
                 for x, x_value in enumerate(row):
-                    if (current_y + y >= len(self.grid) - 1 or self.grid[current_y + y + 1][self.current.x + x] == 1):
-                        print(str(20 - y) + ":" + str(self.current.y))
-                        if ((20 - y) - self.current.y <= 6):
-                            complete = True
-                            return
-                        for y, row in enumerate(self.current_shape()):
-                            for x, x_value in enumerate(row):
-                                if (self.current_shape()[y][x] == 1):
-                                    self.visualized_grid[current_y +
-                                                         y][self.current.x + x] = 1
-                        complete = True"""
+                    if (self.current_shape()[y][x] == 1 and (current_y + y >= len(self.visualized_grid) - 1 or self.grid[current_y + y + 1][self.current.x + x] == 1)):
+                        complete = True
 
-    def visualize(self):
-        pass
+                        def logic(x, y, _, __):
+                            self.visualized_grid[current_y +
+                                                 y][self.current.x + x] = 1
+                        self.iterate_current(logic)
 
     def is_blocked(self, predicate):
         for y, row in enumerate(self.current_shape()):
