@@ -153,5 +153,5 @@ def get_shape(type, state):
     return dictionary[type.get_name()][state]
 
 
-def get_random():
+def get_random_type():
     return getattr(TetrominoType, random.choice(tetrominos))

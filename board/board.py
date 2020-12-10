@@ -2,7 +2,8 @@ import threading
 import random
 from objects.tetromino import Tetromino
 from enums.tetromino_type import TetrominoType
-from library.tetromino_library import get_shape, get_random
+from library.tetromino_library import get_shape, get_random_type
+from high_score import high_score
 
 
 class Board:
@@ -19,12 +20,13 @@ class Board:
         self.level = 0
         self.score = 0
         self.total_cleared = 0
-        self.hold = None
+        self.hold_type = None
+        self.hold_disabled = False
         self.grid = self.generate_grid()
         self.moving_grid = self.generate_grid()
         self.visualized_grid = self.generate_grid()
-        self.current = Tetromino(get_random())
-        self.next = get_random()
+        self.current = Tetromino(get_random_type())
+        self.next_type = get_random_type()
         self.current_shape = lambda: get_shape(
             self.current.type, self.current.state)
 
@@ -60,9 +62,9 @@ class Board:
         elif (y == 16):
             return f"Score: {self.score}"
         elif (y == 18):
-            return f"Next: {self.next.name}"
+            return f"Next: {self.next_type.name}"
         elif (y == 19):
-            return f"Hold: {self.hold}"
+            return f"Hold: {None if self.hold_type == None else self.hold_type.name}"
         return ""
 
     def attempt_reward(self):
@@ -76,9 +78,10 @@ class Board:
                 self.total_cleared += 1
         if (cleared > 0):
             self.score += points[cleared - 1]*(self.level + 1)
+            high_score.new_score(self.score)
 
     def advance_level(self):
-        if (self.total_cleared >= 1):
+        if (self.total_cleared >= 5):
             self.total_cleared = 0
             self.level += 1
 
@@ -96,8 +99,8 @@ class Board:
             self.current.y += 1
         else:
             self.apply_tetromino()
-            self.current = Tetromino(self.next)
-            self.next = get_random()
+            self.current = Tetromino(self.next_type)
+            self.next_type = get_random_type()
 
     def apply_tetromino(self):
         def logic(x, y, _, __):
@@ -108,6 +111,7 @@ class Board:
         def logic(x, y, _, __):
             if (self.current.y + y >= len(self.grid) - 1 or self.grid[self.current.y + y + 1][self.current.x + x] == 1):
                 self.current.set_complete(True)
+                self.hold_disabled = False
             self.moving_grid[self.current.y +
                              y][self.current.x + x] = self.current_shape()[y][x]
         self.iterate_current(logic)
@@ -162,10 +166,7 @@ class Board:
         if (self.is_blocked(lambda x, y: self.current.x + x >= self.width or self.grid[self.current.y + y][self.current.x + x] == 1)):
             return
         state = self.current.state
-        self.current.state = 0 if state == 3 else state - 1
-
-    def soft_drop(self):
-        pass
+        self.current.state = 3 if state == 0 else state - 1
 
     def hard_drop(self):
         while (not self.current.complete):
@@ -174,6 +175,14 @@ class Board:
                 for x, x_value in enumerate(row):
                     if (self.current_shape()[y][x] == 1 and (self.current.y + y >= len(self.grid) - 1 or self.grid[self.current.y + y + 1][self.current.x + x] == 1)):
                         self.current.set_complete(True)
+                        self.hold_disabled = False
 
     def hold(self):
-        pass
+        if (self.hold_disabled):
+            return
+        previous_hold_type = self.hold_type
+        self.hold_type = self.current.type
+        self.current = Tetromino(
+            self.next_type if previous_hold_type == None else previous_hold_type)
+        self.next_type = get_random_type()
+        self.hold_disabled = True

@@ -1,4 +1,5 @@
 import threading
+from high_score import high_score
 from input_modules.input_listener import listen
 from input_modules.input_handler import handle_input
 

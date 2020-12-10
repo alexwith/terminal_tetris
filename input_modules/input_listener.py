@@ -2,7 +2,7 @@ from pynput import keyboard  # pip3 install pynput
 from pynput.keyboard import KeyCode
 from pynput.keyboard import Key
 from display.display import display
-from main_port import shutdown
+from exit_app import shutdown
 from input_modules.input_handler import input_queue
 import threading
 
@@ -13,7 +13,6 @@ def actions(board): return [
     [Key.up, KeyCode(char="x"), board.rotate_clockwise],
     [Key.ctrl, KeyCode(char="z"), board.rotate_counter_clockwise],
     [Key.space, board.hard_drop],
-    [Key.down, board.soft_drop],
     [Key.shift, KeyCode(char="c"), board.hold],
     [Key.enter, display.start],
     [KeyCode(char="h"), display.controls],
@@ -21,6 +20,7 @@ def actions(board): return [
     [KeyCode(char="p"), display.pause],
     [KeyCode(char="r"), display.resume],
     [KeyCode(char="s"), display.leave_game_over],
+    [KeyCode(char="l"), display.leave_game],
     [KeyCode(char="q"), shutdown]
 ]
 

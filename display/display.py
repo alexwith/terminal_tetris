@@ -4,7 +4,9 @@ import time
 import display
 import threading
 from enums.display_state import DisplayState
+from math import log10
 from board.board import Board
+from high_score import high_score
 from constants import REFRESH_INTERVAL
 
 
@@ -28,49 +30,57 @@ class Display:
             self.draw_game_over()
 
     def draw_start(self):
-        print("#############################")
-        print("#      TERMINAL TETRIS      #")
-        print("#                           #")
-        print("#    Press H for controls   #")
-        print("#    Press ENTER to start   #")
-        print("#                           #")
-        print("#############################")
+        print("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
+        print("■      TERMINAL TETRIS      ■")
+        print("■                           ■")
+        print("■    Press H for controls   ■")
+        print("■    Press ENTER to start   ■")
+        print("■                           ■")
+        print(self.get_high_score_line())
+        print("■                           ■")
+        print("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
 
     def draw_controls(self):
-        print("#########################################")
-        print("#           TERMINAL TETRIS             #")
-        print("#                                       #")
-        print("# ⇦          - move left                #")
-        print("# ⇨          - move right               #")
-        print("# ⇧ or X     - rotate clockwise         #")
-        print("# ctrl or Z  - rotate counter clockwise #")
-        print("# space      - hard drop                #")
-        print("# ⇩          - soft drop                #")
-        print("# shift or C - hold                     #")
-        print("# P          - pause the game           #")
-        print("# E          - exit                     #")
-        print("#                                       #")
-        print("# Q          - quit/shutdown            #")
-        print("#                                       #")
-        print("#########################################")
+        print("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
+        print("■           TERMINAL TETRIS             ■")
+        print("■                                       ■")
+        print("■ ⇦          - move left                ■")
+        print("■ ⇨          - move right               ■")
+        print("■ ⇧ or X     - rotate clockwise         ■")
+        print("■ ctrl or Z  - rotate counter clockwise ■")
+        print("■ space      - hard drop                ■")
+        print("■ shift or C - hold                     ■")
+        print("■ P          - pause the game           ■")
+        print("■ L          - leave the game           ■")
+        print("■ E          - exit                     ■")
+        print("■                                       ■")
+        print("■ Q          - quit/shutdown            ■")
+        print("■                                       ■")
+        print("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
 
     def draw_pause(self):
-        print("#############################")
-        print("#      TERMINAL TETRIS      #")
-        print("#                           #")
-        print("#           PAUSED          #")
-        print("#      Press R to resume    #")
-        print("#                           #")
-        print("#############################")
+        print("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
+        print("■      TERMINAL TETRIS      ■")
+        print("■                           ■")
+        print("■           PAUSED          ■")
+        print("■      Press R to resume    ■")
+        print("■                           ■")
+        print("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
 
     def draw_game_over(self):
-        print("#############################")
-        print("#      TERMINAL TETRIS      #")
-        print("#                           #")
-        print("#        GAME OVER          #")
-        print("#   Press S to go to start  #")
-        print("#                           #")
-        print("#############################")
+        print("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
+        print("■      TERMINAL TETRIS      ■")
+        print("■                           ■")
+        print("■        GAME OVER          ■")
+        print("■   Press S to go to start  ■")
+        print("■                           ■")
+        print("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
+
+    def get_high_score_line(self):
+        score = high_score.high_score
+        line = f"■    High Score: {score}" + \
+            (" " * (11 - (int(log10(score)) + 1))) + "■"
+        return line
 
     def controls(self):
         if (self.display_state == DisplayState.START):
@@ -78,8 +88,9 @@ class Display:
             self.update_display_timer()
 
     def start(self):
-        self.display_state = DisplayState.RUN
-        self.update_display_timer()
+        if (self.display_state != DisplayState.RUN):
+            self.display_state = DisplayState.RUN
+            self.update_display_timer()
 
     def pause(self):
         if (self.display_state == DisplayState.RUN):
@@ -90,6 +101,11 @@ class Display:
         if (self.display_state == DisplayState.PAUSE):
             self.display_state = DisplayState.RUN
             self.update_display_timer()
+
+    def leave_game(self):
+        self.display_state = DisplayState.START
+        self.board = Board(self, 10, 20)
+        self.update_display_timer()
 
     def exit(self):
         if (self.display_state == DisplayState.CONTROLS):
