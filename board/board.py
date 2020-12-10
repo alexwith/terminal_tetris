@@ -30,15 +30,15 @@ class Board:
 
     def redraw(self):
         self.timer += 1
-        self.check_game_over()
-        self.attempt_reward()
-        self.advance_level()
         self.moving_grid = self.generate_grid()
         self.visualized_grid = self.generate_grid()
         self.apply_moving_grid()
         self.visualize()
         self.move_or_switch()
         self.draw_grids()
+        self.check_game_over()
+        self.attempt_reward()
+        self.advance_level()
         print("\n".join(''.join(line) for line in self.to_show))
         self.to_show.clear()
 
@@ -47,9 +47,9 @@ class Board:
             row_text = "|"
             for x, x_value in enumerate(row):
                 if (x_value == 1 or self.moving_grid[y][x] == 1):
-                    row_text += " #"
+                    row_text += " ■"
                 elif (self.visualized_grid[y][x] == 1):
-                    row_text += " $"
+                    row_text += " □"
                 elif (x_value == 0):
                     row_text += " ."
             self.to_show.append(row_text + " | " + self.get_side_bar(y))
@@ -70,7 +70,8 @@ class Board:
         points = [40, 100, 300, 1200]
         for y, row in enumerate(self.grid):
             if (not 0 in row):
-                self.grid[y] = [0 for x in range(10)]
+                del self.grid[y]
+                self.grid.insert(0, [0 for x in range(10)])
                 cleared += 1
                 self.total_cleared += 1
         if (cleared > 0):
@@ -133,7 +134,7 @@ class Board:
                     if (predicate(x, y)):
                         return True
                         break
-        return False
+        return self.current.complete
 
     def iterate_current(self, func):
         for y, row in enumerate(self.current_shape()):
