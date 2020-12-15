@@ -79,7 +79,7 @@ class Display:
     def get_high_score_line(self):
         score = high_score.high_score
         line = f"■    High Score: {score}" + \
-            (" " * (11 - (int(log10(score)) + 1))) + "■"
+            (" " * (11 - (int(log10(score) if score > 0 else 0) + 1))) + "■"
         return line
 
     def controls(self):
