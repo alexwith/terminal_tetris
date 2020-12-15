@@ -21,15 +21,11 @@ class HighScore:
             score_file.close()
 
     def save(self):
-        print("saving")
         score_file = open("tetris_high_score.txt", "w")
         try:
-            print("writing")
             score_file.write(str(self.high_score))
-            print("written")
         finally:
             score_file.close()
-            print("closed")
 
 
 high_score = HighScore()
