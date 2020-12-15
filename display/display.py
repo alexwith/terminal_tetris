@@ -7,7 +7,7 @@ from enums.display_state import DisplayState
 from math import log10
 from board.board import Board
 from high_score import high_score
-from constants import REFRESH_INTERVAL
+from constants import REFRESH_INTERVAL, CLEAR_COMMAND
 
 
 class Display:
@@ -17,7 +17,7 @@ class Display:
         self.board = Board(self, 10, 20)
 
     def draw_display(self):
-        os.system("clear")
+        os.system(CLEAR_COMMAND)
         if (self.display_state == DisplayState.START):
             self.draw_start()
         elif (self.display_state == DisplayState.CONTROLS):
