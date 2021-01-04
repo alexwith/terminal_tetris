@@ -1,5 +1,5 @@
-import threading
 import random
+import threading
 from objects.tetromino import Tetromino
 from enums.tetromino_type import TetrominoType
 from library.tetromino_library import get_shape, get_random_type
@@ -131,15 +131,6 @@ class Board:
                                                  y][self.current.x + x] = 1
                         self.iterate_current(logic)
 
-    def is_blocked(self, predicate):
-        for y, row in enumerate(self.current_shape()):
-            for x, x_value in enumerate(row):
-                if (self.current_shape()[y][x] == 1):
-                    if (predicate(x, y)):
-                        return True
-                        break
-        return self.current.complete
-
     def iterate_current(self, func):
         for y, row in enumerate(self.current_shape()):
             for x, x_value in enumerate(row):
@@ -157,16 +148,18 @@ class Board:
         self.current.x += 1
 
     def rotate_clockwise(self):
-        if (self.is_blocked(lambda x, y: self.current.x + x >= self.width or self.grid[self.current.y + y][self.current.x + x] == 1)):
-            return
         state = self.current.state
-        self.current.state = 0 if state == 3 else state + 1
+        next_state = 0 if state == 3 else state + 1
+        if (self.is_rotation_blocked(next_state)):
+            return
+        self.current.state = next_state
 
     def rotate_counter_clockwise(self):
-        if (self.is_blocked(lambda x, y: self.current.x + x >= self.width or self.grid[self.current.y + y][self.current.x + x] == 1)):
-            return
         state = self.current.state
-        self.current.state = 3 if state == 0 else state - 1
+        next_state = 3 if state == 0 else state - 1
+        if (self.is_rotation_blocked(next_state)):
+            return
+        self.current.state = next_state
 
     def hard_drop(self):
         while (not self.current.complete):
@@ -186,3 +179,34 @@ class Board:
             self.next_type if previous_hold_type == None else previous_hold_type)
         self.next_type = get_random_type()
         self.hold_disabled = True
+
+    def debug(self, message):
+        debug = open("debug.txt", "a+")
+        debug.write("\n" + str(message))
+        debug.close()
+
+    def is_blocked(self, predicate):
+        for y, row in enumerate(self.current_shape()):
+            for x, x_value in enumerate(row):
+                if (self.current_shape()[y][x] == 1):
+                    if (predicate(x, y)):
+                        return True
+                        break
+        return self.current.complete
+
+    def is_rotation_blocked(self, next_state):
+        try:
+            shape = get_shape(self.current.type, next_state)
+            for y, row in enumerate(shape):
+                for x, x_value in enumerate(row):
+                    if (shape[y][x] == 1):
+                        if (self.current.x + x < 0):
+                            return True
+            for y, row in enumerate(shape):
+                for x, x_value in enumerate(row):
+                    if (shape[y][x] == 1):
+                        if (self.current.y + y >= len(self.grid) - 1 or self.grid[self.current.y + y + 1][self.current.x + x] == 1):
+                            pass
+        except:
+            return True
+        return False

@@ -75,6 +75,8 @@ class Display:
         print("■   Press S to go to start  ■")
         print("■                           ■")
         print("■■■■■■■■■■■■■■■■■■■■■■■■■■■■■")
+        print("Losing board can be seen below:")
+        print("")
 
     def get_high_score_line(self):
         score = high_score.high_score
