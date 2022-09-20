@@ -1,11 +1,7 @@
-from pynput import keyboard  # pip3 install pynput
-from pynput.keyboard import KeyCode
-from pynput.keyboard import Key
+from pynput.keyboard import Key, KeyCode, Listener
 from display.display import display
 from exit_app import shutdown
 from input_modules.input_handler import input_queue
-import threading
-
 
 def actions(board): return [
     [Key.left, board.move_left],
@@ -26,7 +22,7 @@ def actions(board): return [
 
 
 def listen():
-
+    
     def on_press(key):
         for entry in actions(display.board):
             successful = False
@@ -36,5 +32,5 @@ def listen():
             if (successful):
                 input_queue.put(entry[len(entry) - 1])
 
-    with keyboard.Listener(on_press=on_press) as listener:
+    with Listener(on_press=on_press) as listener:
         listener.join()
